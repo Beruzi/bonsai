@@ -2,17 +2,16 @@
 # Project Variables
 SRC = src
 TARGET = bonsai
-BUILD_DIR = bin
-DATA_DIR = ~/.local/share/bonsai
-
 
 # Compiler
 CXX := g++
-CXXFLAGS := -
+CXXFLAGS := -O0 -g -Wall -Wextra -Wpedantic
+LDLIBS := -lncurses
 
 
-dev: 
-	g++ src/main.cpp -lncurses -O0 -g -o bonsai
-	./bonsai
+all: $(TARGET)
 
+$(TARGET):
+	$(CXX) $(wildcard $(SRC)/*.cpp) $(CXXFLAGS) $(LDLIBS) -o $(TARGET)
+	./$(TARGET)
 
