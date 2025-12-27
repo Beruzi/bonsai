@@ -1,16 +1,37 @@
 #include "ColumnView.h"
 
-ColumnView::ColumnView() : columnName("status"), columnWindow(nullptr) {}
-
 ColumnView::ColumnView(WINDOW* boardWin, std::string name)  : columnName(name) {
     initColumn(boardWin);
 }
+
+ColumnView::ColumnView(ColumnView&& other) noexcept {
+    columnName = std::move(other.columnName);
+    columnWindow = std::exchange(other.columnWindow, nullptr);
+    //cards = std::move(other.column);
+}
+
+ColumnView& ColumnView::operator=(ColumnView&& other) noexcept {
+    if(this == &other) return *this;
+
+    if(columnWindow) {
+        delwin(columnWindow);
+        columnWindow = nullptr;
+    }
+
+    columnName = std::move(other.columnName);
+    columnWindow = std::exchange(other.columnWindow, nullptr);
+    //cards = std::move(other.column);
+
+    return *this;
+}
+
 
 ColumnView::~ColumnView() {
     delwin(columnWindow);
 }
 
 
+// ----------------------------------------------------------------
 void ColumnView::initColumn(WINDOW* boardWin) {
     int maxH, maxW;
     getmaxyx(boardWin, maxH, maxW);
@@ -21,8 +42,9 @@ void ColumnView::initColumn(WINDOW* boardWin) {
     mvwprintw(columnWindow, 1, 1, "%s", columnName.c_str());
 }
 
+//void addColumn(std::string colName) {}
+
 
 void ColumnView::render() {
     wnoutrefresh(columnWindow);
-    // propagte to cards
 }
